@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph UserSide [Frontend Environment]
+        Browser[User Browser]
+        UI[Vue.js Frontend]
+        Browser --- UI
+    end
+
+    subgraph ServerSide [Backend Infrastructure]
+        Backend[Spring Boot Agent Client]
+        WeatherSrv[Weather MCP Server]
+        
+        subgraph Orchestrator [AI Resilience Layer]
+            Failover[FailoverChatModel]
+            Manager[AiProviderManager]
+            Failover --- Manager
+        end
+        Backend --- Orchestrator
+    end
+
+    subgraph External [AI & Data Providers]
+        Gemini[Google Gemini API - PRIMARY]
+        Groq[Groq API - FALLBACK/Llama 3]
+        GMapAPI[Google Places API]
+        QWAPI[QWeather API]
+    end
+
+    UI <-->|REST/JSON| Backend
+    Backend <-->|MCP/SSE| WeatherSrv
+    Orchestrator -->|Primary Path| Gemini
+    Orchestrator -.->|Fallback Path| Groq
+    Backend -->|HTTPS| GMapAPI
+    WeatherSrv -->|HTTPS| QWAPI
+    
+    style Gemini fill:#f9f,stroke:#333,stroke-width:2px
+    style Groq fill:#fff,stroke:#333,stroke-dasharray: 5 5

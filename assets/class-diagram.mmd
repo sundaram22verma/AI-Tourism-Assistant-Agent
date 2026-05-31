@@ -1,0 +1,39 @@
+classDiagram
+    class ChatModel {
+        <<interface>>
+        +chat(request: ChatRequest) ChatResponse
+    }
+
+    class FailoverChatModel {
+        -providerManager: AiProviderManager
+        +chat(request: ChatRequest) ChatResponse
+    }
+
+    class AiProviderManager {
+        -activeProvider: Provider
+        -geminiChatModel: ChatModel
+        -groqChatModel: ChatModel
+        +checkProviders()
+        +switchToNextProvider()
+        +getActiveModel() ChatModel
+        +performBackgroundRecoveryCheck()
+    }
+
+    class Provider {
+        <<enumeration>>
+        GEMINI
+        GROQ
+    }
+
+    class TravelService {
+        +getTravelGuide(require: String) String
+    }
+
+    ChatModel <|.. FailoverChatModel
+    FailoverChatModel --> AiProviderManager : delegates to
+    AiProviderManager --> Provider : tracks state
+    AiProviderManager --> ChatModel : manages instances
+    TravelService --> ChatModel : uses FailoverChatModel
+    
+    note for AiProviderManager "Primary: GEMINI\nFallback: GROQ\nAuto-recovery via @Scheduled"
+    note for FailoverChatModel "Handles 429/Quota/Timeout errors\ntransparently during request"

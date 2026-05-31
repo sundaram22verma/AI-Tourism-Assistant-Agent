@@ -1,0 +1,173 @@
+/* Modern Design Tokens */
+:root {
+  /* Colors - Vibrant & Modern (Updated to match Travel Buddy Brand) */
+  --primary: #00CED1; /* Sky Blue / Teal */
+  --primary-hover: #00b5b8;
+  --primary-light: #e0f7f7;
+
+  --secondary: #FFD700; /* Golden Yellow */
+  --secondary-hover: #e6c200;
+
+  --accent: #FFD700;
+
+  --success: #10b981;
+  --warning: #FFD700;
+  --danger: #ef4444;
+  --info: #64748b;
+
+  /* Neutrals */
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+
+  --text-main: #1F2937; /* Darker Slate for better contrast */
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+
+  --border-color: #e2e8f0;
+  --border-color-hover: #cbd5e1;
+
+  /* Typography - Modern Rounded Sans (Montserrat style) */
+  --font-sans: 'Montserrat', 'Quicksand', 'Inter', system-ui, sans-serif;
+
+  /* Shadows - Updated with new primary color hint */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-primary: 0 10px 15px -3px rgba(0, 206, 209, 0.3);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Theme Overrides */
+[data-theme='dark'] {
+  --bg-main: #020617;
+  --bg-card: #0f172a;
+  --bg-glass: rgba(15, 23, 42, 0.7);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-light: #64748b;
+
+  --border-color: #1e293b;
+  --border-color-hover: #334155;
+
+  --primary-light: rgba(0, 206, 209, 0.1);
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.7);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.8);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.9);
+}
+
+/* Base Reset & Styles */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Typography Scale */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-main);
+}
+
+h1 {
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
+  letter-spacing: -0.02em;
+}
+h2 {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  letter-spacing: -0.02em;
+}
+h3 {
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
+}
+h4 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--primary-hover);
+}
+
+/* Glassmorphism Utility */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .glass {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color-hover);
+}

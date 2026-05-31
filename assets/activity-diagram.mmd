@@ -1,0 +1,28 @@
+flowchart TD
+    Start([Start Request]) --> Input[User Input: Destination/Dates/Preferences]
+    Input --> Logic[TravelService Pipeline]
+    
+    subgraph FailoverLogic [Failover Chat Model Orchestration]
+        Direction{Active Provider?}
+        Direction -- Gemini --> TryGemini[Invoke Gemini Primary]
+        Direction -- Groq --> TryGroq[Invoke Groq Fallback]
+        
+        TryGemini --> SuccessGemini{Success?}
+        SuccessGemini -- Yes --> Result
+        SuccessGemini -- No: 429/Timeout --> Switch[AiProviderManager: Switch to Groq]
+        Switch --> TryGroq
+        
+        TryGroq --> SuccessGroq{Success?}
+        SuccessGroq -- Yes --> Result
+        SuccessGroq -- No --> Error[Throw Service Exception]
+    end
+    
+    subgraph BackgroundCheck [Background Health Recovery]
+        Monitor[Scheduled Task: 60s Interval] --> HealthCheck{Is Gemini Healthy?}
+        HealthCheck -- Yes --> Restore[Switch Active to Gemini]
+        HealthCheck -- No --> Wait[Maintain Fallback State]
+    end
+    
+    Logic --> FailoverLogic
+    Result --> UI[Render HTML Guide]
+    UI --> End([End])

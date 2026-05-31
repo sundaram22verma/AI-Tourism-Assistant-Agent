@@ -1,0 +1,37 @@
+graph LR
+    subgraph "tourism-agent-ui (Vue 3)"
+        Views[Views/Pages]
+        Components[Components]
+        Services[API Services]
+    end
+
+    subgraph "tourism-agent-client (Backend Orchestrator)"
+        subgraph Core [Business Logic]
+            Controller[Controllers]
+            Service[TravelService]
+        end
+        
+        subgraph AIReliability [AI Failover & Recovery]
+            Failover[FailoverChatModel]
+            Manager[AiProviderManager]
+        end
+        
+        subgraph Tools [External Integration]
+            GMap[Google Maps Tool]
+            McpClient[MCP Weather Client]
+        end
+    end
+
+    subgraph "tourism-weather-server (MCP Server)"
+        WService[Weather Service]
+        McpServer[MCP Server Config]
+    end
+
+    Services --> Controller
+    Controller --> Service
+    Service --> Failover
+    Failover --> Manager
+    Service --> GMap
+    Service --> McpClient
+    McpClient <--> McpServer
+    McpServer --> WService

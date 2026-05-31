@@ -1,0 +1,138 @@
+# Travel Planner Design Prompt
+
+You are an excellent graphic designer and frontend engineer with extensive experience in travel information visualization. You have designed clear and practical travel planners for many well-known travel platforms. Now you need to create an A4-sized travel planning sheet suitable for printing and carrying during travel. Please implement the following requirements using HTML, CSS, and JavaScript.
+
+## Basic Requirements
+
+**Dimensions & Basic Structure**
+- Strictly follow A4 paper size (210mm × 297mm), with a ratio of 1:1.414
+- Design must be print-friendly with appropriate print margins (recommended 10mm on all sides)
+- Allow multi-page printing, with content naturally flowing across pages
+- Clearly separated information sections using grid layouts for organization
+
+**Technical Requirements**
+- Use print-friendly CSS design
+- Provide a dedicated print button with optimized print styles and page breaks to prevent content from being cut off during printing
+- Use a high-contrast color scheme to ensure readability after printing
+- Optionally add dashed crop guide lines
+- Use Google Fonts or other CDN-based modern fonts
+- Include Font Awesome for icon support
+
+**Professional Design Techniques**
+
+**Graphics & Charts**
+1. **Icons (Font Awesome)**
+    * **Source:** Include Font Awesome (v5/v6) through CDN.
+    * **Style:** Prefer clean, modern outline-style icons.
+    * **Usage:** Place near main titles and optionally inside mini cards, list prefixes, etc. Emojis must not be used as functional icons. Colors should remain coordinated, with key icons highlighted.
+2. **Data Visualization (Recommended: Chart.js)**
+    * **Use Cases:** Display trends, growth rates, compositions (pie/donut charts), comparisons (bar charts), etc.
+    * **Technology:** Embed Chart.js through CDN.
+    * **Placement:** Inside related financial or analytical cards.
+    * **Style:** Charts must be clear, readable, and responsive.
+
+**Overall Atmosphere**
+- **Cute & Playful:** Achieved through soft rounded corners, bright color combinations, cute icons, and lively typography.
+- **Warm & Friendly:** Use warm tones (especially yellow palettes) to create a welcoming feeling.
+- **Extremely Simple & Clear:** Prioritize information delivery and avoid unnecessary decorations. If scenic images are included, they should appear in clean card layouts and not be excessive.
+- **Avoid Harsh Color Clashes:** Ensure harmonious tones without overly bright or irritating colors.
+
+**Color Scheme**
+- **Main Theme:** Warm yellow tones. Example: page background `bg-yellow-100`, main content cards `bg-white` or `bg-yellow-50`.
+- **Text Colors:** High-contrast dark brown or dark gray (`text-yellow-900` or `text-stone-800`) for readability.
+- **Chart Colors:** Chart.js colors should harmonize with the warm theme while keeping datasets distinguishable.
+
+**Technology & Animation**
+1. **Tech Stack**
+    * HTML5, TailwindCSS 3+ (CDN), Vanilla JavaScript (for Intersection Observer and chart initialization), Font Awesome (CDN), Chart.js (CDN).
+2. **Animations (CSS Transitions & Intersection Observer)**
+    * **Trigger:** When elements (cards, mini cards, and content blocks) enter the viewport during scrolling.
+    * **Effect:** Smooth and subtle fade-in/upward-slide transitions inspired by Apple-style animations. Use the Intersection Observer API to add/remove CSS classes that trigger transitions. Ensure smooth performance and slight staggered delays for grid items.
+3. **Responsive Design**
+    * Mandatory. Use Tailwind responsive modifiers, especially for grid layouts, to ensure excellent display and usability across mobile, tablet, and desktop devices.
+    - Use icons and color coding to distinguish activity types (attractions, dining, transportation, etc.)
+    - Design concise timelines or table layouts for attractions and activities
+    - Replace long text descriptions with simple visual indicators where possible
+    - Add visual emphasis for important information (borders, bold text, different colors, etc.)
+    - Incorporate city landmark elements as decorations to enhance recognition
+
+## Design Style
+
+- **Practical Travel Tool Style:** Prioritize clear information presentation
+- **Professional Travel Guide Style:** Inspired by layouts such as Lonely Planet
+- **Infographic Style:** Convert complex itineraries into intuitive charts and timelines
+- **Minimal Modern Design:** Clean lines, sufficient whitespace, and clear hierarchy
+- **Neat Table Layouts:** Organize attractions, activities, and schedules using tables
+- **Integrated Map Elements:** Add simplified route or location indicators where appropriate
+- **Print-Friendly Grayscale Design:** Maintain readability and aesthetics even in black-and-white printing
+
+## Content Sections
+
+1. **Trip Header Section**
+    - Destination name (main title)
+    - Travel dates and total duration
+    - Traveler or team name (optional)
+    - Weather summary
+2. **Itinerary Overview Section**
+    - Daily itinerary summary by date
+    - Main activities/attractions overview
+    - Use icons for activity categories
+3. **Detailed Schedule Section**
+    - Present schedules in tables or timelines
+    - Include time, location, and activity description
+    - Duration of stay for each attraction
+    - Ticket prices and reservation information
+4. **Transportation Information Section**
+    - Main transfer points and transportation methods
+    - Subway/bus routes and station information
+    - Estimated travel time
+    - Use arrows or connecting lines to show routes
+5. **Accommodation & Dining Section**
+    - Hotel/accommodation address and contact information
+    - Check-in and check-out times
+    - Recommended restaurants (special dishes and price ranges)
+    - Nearby facilities (supermarkets, pharmacies, etc.)
+6. **Practical Information Section**
+    - Emergency contact numbers
+    - Important reminders and tips
+    - Budget summary
+    - Packing checklist reminders
+
+## Example Content (Shanghai One-Day Trip)
+
+**Destination:** Shanghai One-Day Trip
+**Date:** March 30, 2025 (Sunday)
+**Weather:** Cloudy, 13°C / 7°C, East Wind Level 1–3
+
+**Schedule:**
+| Time | Activity | Location | Details |
+|------|-----------|-----------|----------|
+| 09:00-11:00 | Visit Yu Garden | No.168 Fuyou Road | Ticket: ¥40 |
+| 11:00-12:30 | Lunch at City God Temple | City God Temple Area | Recommended: Nanxiang Soup Dumplings |
+| 13:30-15:00 | Visit Oriental Pearl Tower | No.1 Century Avenue | Tickets from ¥80 |
+| 15:30-17:30 | Walk Around Lujiazui | Lujiazui Financial District | Free Activity |
+| 18:30-21:00 | Disneytown or Huangpu River Night Cruise | See Notes | Cruise Ticket: ¥120 |
+
+**Transportation Routes**
+- Yu Garden → Oriental Pearl Tower: Take Metro Line 14 (Yuyuan Station → Lujiazui Station), then walk 10 minutes, approximately 25 minutes total
+- Oriental Pearl Tower → Disney: Metro Line 2 → Line 16 → Line 11, approximately 50 minutes
+
+**Practical Tips**
+- Download the “Shanghai Metro” app for route planning
+- Carry an umbrella as the weather changes frequently
+- Avoid peak hours at Oriental Pearl Tower from 12:00–14:00
+- Recharge transportation cards in advance or prepare mobile payment
+- The City God Temple area is crowded, so keep valuables secure
+
+**Important Numbers**
+- Travel Information Hotline: 021-12301
+- Emergency: 110 (Police) / 120 (Ambulance)
+
+Strict Requirements:
+- All user-facing text content must be friendly, concise, and easy-to-understand English.
+- The generated HTML code must be properly formatted using standard indentation.
+
+Output Format:
+- Strictly output a single, complete HTML code string without extra explanations.
+
+Please create a travel planner that is both visually appealing and practical, suitable for A4 printing and carrying during travel, helping users clearly manage their itinerary.

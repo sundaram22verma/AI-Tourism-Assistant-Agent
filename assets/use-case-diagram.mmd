@@ -1,0 +1,37 @@
+flowchart LR
+    User((User))
+    
+    subgraph AIResilience [AI Provider Management]
+        UC5(Automatic Provider Failover)
+        UC6(Background Health Recovery)
+        UC7(Dynamic Request Routing)
+    end
+
+    subgraph MainFeatures [Travel Buddy Core]
+        UC1(Plan New Trip)
+        UC2(View Travel Guide)
+        UC3(Get Live Weather)
+        UC4(Discover Local Spots)
+    end
+    
+    subgraph Providers [Services]
+        Gemini[Google Gemini Primary]
+        Groq[Groq Fallback]
+        Weather[QWeather]
+        Maps[Google Maps]
+    end
+
+    User --> UC1
+    User --> UC2
+    
+    UC1 -.-> UC5
+    UC5 -.-> UC7
+    UC6 -.-> UC5
+    
+    UC1 --- Gemini
+    UC5 --- Groq
+    UC3 --- Weather
+    UC4 --- Maps
+    
+    style Gemini fill:#d4f1f9
+    style Groq fill:#f9d4d4
