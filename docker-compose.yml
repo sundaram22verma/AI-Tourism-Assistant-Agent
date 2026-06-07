@@ -1,0 +1,57 @@
+services:
+  weather-server:
+    build:
+      context: ./tourism-weather-server
+    container_name: weather-server
+    environment:
+      - WEATHER_API_KEY=${WEATHER_API_KEY}
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:9000/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - tourism-network
+
+  agent-client:
+    build:
+      context: ./tourism-agent-client
+    container_name: agent-client
+    environment:
+      - TRAVEL_AI_GEMINI_KEY=${TRAVEL_AI_GEMINI_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - MCP_WEATHER_SSE_URL=http://weather-server:9000/sse
+    ports:
+      - "8080:8080"
+    depends_on:
+      weather-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: on-failure
+    networks:
+      - tourism-network
+
+  agent-ui:
+    build:
+      context: ./tourism-agent-ui
+    container_name: agent-ui
+    ports:
+      - "80:80"
+    depends_on:
+      agent-client:
+        condition: service_healthy
+    networks:
+      - tourism-network
+
+networks:
+  tourism-network:
+    driver: bridge

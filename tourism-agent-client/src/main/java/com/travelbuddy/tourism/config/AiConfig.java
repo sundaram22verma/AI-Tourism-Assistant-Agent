@@ -42,7 +42,7 @@ public class AiConfig {
                 .modelName(groqModelName.isEmpty() ? "llama-3.3-70b-versatile" : groqModelName)
                 .baseUrl("https://api.groq.com/openai/v1")
                 .maxRetries(0) 
-                .timeout(Duration.ofSeconds(60))
+                .timeout(Duration.ofSeconds(180))
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -57,6 +57,7 @@ public class AiConfig {
                 .apiKey(apiKey)
                 .modelName(effectiveModelName)
                 .maxRetries(0)
+                .timeout(Duration.ofSeconds(180))
                 .logRequestsAndResponses(true)
                 .build();
     }

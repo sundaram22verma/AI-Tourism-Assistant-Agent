@@ -14,10 +14,13 @@ import java.util.List;
 @Configuration
 public class McpConfig {
 
+    @org.springframework.beans.factory.annotation.Value("${mcp.weather.sse-url:http://localhost:9000/sse}")
+    private String weatherSseUrl;
+
     @Bean
     public McpClient mcpClientWeather() {
         McpTransport transport = new HttpMcpTransport.Builder()
-                .sseUrl("http://localhost:9000/sse")
+                .sseUrl(weatherSseUrl)
                 .timeout(Duration.ofMinutes(5))
                 .logRequests(true)
                 .logResponses(true)
