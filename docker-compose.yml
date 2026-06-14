@@ -13,6 +13,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    restart: unless-stopped
     networks:
       - tourism-network
 
@@ -36,7 +37,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - tourism-network
 
@@ -49,6 +50,7 @@ services:
     depends_on:
       agent-client:
         condition: service_healthy
+    restart: unless-stopped
     networks:
       - tourism-network
 

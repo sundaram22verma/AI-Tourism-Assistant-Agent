@@ -1,128 +1,132 @@
 <template>
   <div class="discover-page">
-    <app-header />
-
     <!-- Hero Section -->
     <header class="discover-hero">
       <div class="hero-bg"></div>
-      <div class="container relative z-1">
-        <div class="hero-content text-center">
-          <h1 class="page-title">Discover Your <span>Next Story</span></h1>
-          <p class="page-subtitle">
-            Explore hand-picked destinations and unique experiences worldwide.
-          </p>
+      <div class="container relative z-10">
+        <h1 class="text-center animate-slide-up">Find Your Next <span>Adventure</span></h1>
+        <p class="text-center text-muted mb-8 animate-slide-up" style="animation-delay: 0.1s">
+          Browse through our curated collection of extraordinary destinations
+        </p>
 
-          <div class="search-box-wrapper glass">
-            <el-input
+        <!-- Search Bar -->
+        <div class="search-box-wrapper animate-slide-up" style="animation-delay: 0.2s">
+          <div class="search-box glass">
+            <el-icon class="search-icon"><Search /></el-icon>
+            <input
               v-model="searchQuery"
-              placeholder="Where do you want to go?"
-              class="modern-search"
-              clearable
+              type="text"
+              placeholder="Search by city, country, or landmark..."
               @keyup.enter="handleSearch"
-            >
-              <template #prefix
-                ><el-icon><Search /></el-icon
-              ></template>
-            </el-input>
-            <button class="btn-modern" @click="handleSearch">Search</button>
+            />
+            <button class="btn-modern primary" @click="handleSearch">Search</button>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Filters -->
-    <section class="filters-section py-4">
-      <div class="container mt-4">
-        <div class="filters-bar-wrapper">
-          <div class="filters-bar glass">
-          <div class="filter-group">
-            <label>Region</label>
-            <el-select v-model="filters.region" placeholder="All Regions" clearable>
-              <el-option label="All Regions" value="" />
-              <el-option 
-                v-for="region in availableFilters.regions" 
-                :key="region" 
-                :label="region" 
-                :value="region" 
-              />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>Category</label>
-            <el-select v-model="filters.category" placeholder="All Categories" clearable>
-              <el-option label="All Categories" value="" />
-              <el-option 
-                v-for="cat in availableFilters.categories" 
-                :key="cat" 
-                :label="cat" 
-                :value="cat" 
-              />
-            </el-select>
-          </div>
-          <div class="filter-group">
-            <label>Sort By</label>
-            <el-select v-model="sortBy" placeholder="Recommended">
-              <el-option label="Recommended" value="recommended" />
-              <el-option label="Popularity" value="popularity" />
-              <el-option label="Rating" value="rating" />
-            </el-select>
-          </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Content -->
-    <main class="container py-12" v-loading="loading">
-      <div class="section-header mb-8 flex justify-between items-end">
-        <div>
-          <h2 class="text-3xl font-bold">Explore Destinations</h2>
-          <p class="text-muted">Showing {{ destinations.length }} of {{ totalItems }} results</p>
-        </div>
-      </div>
-
-      <div v-if="destinations.length > 0" class="destinations-grid mb-20">
-        <div v-for="dest in destinations" :key="dest.id" class="dest-card">
-          <div class="dest-card-image">
-            <img :src="dest.image" :alt="dest.name" />
-            <div class="dest-badge">{{ dest.rating }} ★</div>
-          </div>
-          <div class="dest-card-content">
-            <div class="flex justify-between items-start mb-2">
-               <span class="attr-tag">{{ dest.category }}</span>
-               <span class="region-tag">{{ dest.region }}</span>
-            </div>
-            <h3>{{ dest.name }}</h3>
-            <p class="location-text">
-              <el-icon><Location /></el-icon> {{ dest.location }}
-            </p>
-            <p class="description">{{ dest.description }}</p>
-            <div class="dest-card-footer">
-              <div class="footer-info">
-                <span class="reviews">{{ dest.reviewCount.toLocaleString() }} reviews</span>
-                <div class="price" v-if="dest.price">From <span>₹{{ dest.price.toLocaleString() }}</span></div>
+    <!-- Filters & Content -->
+    <main class="discover-content py-12">
+      <section class="filters-section">
+        <div class="container">
+          <div class="filters-bar-wrapper">
+            <div class="filters-bar glass">
+              <div class="filter-group">
+                <label>Region</label>
+                <el-select v-model="filters.region" placeholder="All Regions" clearable>
+                  <el-option label="All Regions" value="" />
+                  <el-option
+                    v-for="region in availableFilters.regions"
+                    :key="region"
+                    :label="region"
+                    :value="region"
+                  />
+                </el-select>
               </div>
-              <button class="btn-text">Explore →</button>
+              <div class="filter-group">
+                <label>Category</label>
+                <el-select v-model="filters.category" placeholder="All Categories" clearable>
+                  <el-option label="All Categories" value="" />
+                  <el-option
+                    v-for="cat in availableFilters.categories"
+                    :key="cat"
+                    :label="cat"
+                    :value="cat"
+                  />
+                </el-select>
+              </div>
+              <div class="filter-group">
+                <label>Sort By</label>
+                <el-select v-model="sortBy" placeholder="Recommended">
+                  <el-option label="Recommended" value="recommended" />
+                  <el-option label="Popularity" value="popularity" />
+                  <el-option label="Rating" value="rating" />
+                </el-select>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div v-else-if="!loading" class="no-results py-20 text-center">
-        <el-empty description="No destinations found matching your criteria" />
-      </div>
+      <!-- Destinations Grid -->
+      <section class="results-section py-8">
+        <div class="container">
+          <div v-if="loading" class="loading-state py-12 text-center">
+            <el-skeleton :rows="5" animated />
+          </div>
 
-      <div class="flex justify-center mt-20" v-if="totalItems > pageSize">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :total="totalItems"
-          :page-size="pageSize"
-          v-model:current-page="currentPage"
-          @current-change="handlePageChange"
-          class="modern-pagination"
-        />
-      </div>
+          <div v-else-if="filteredDestinations.length === 0" class="empty-state py-12 text-center">
+            <div class="empty-icon">🏝️</div>
+            <h3>No destinations found</h3>
+            <p class="text-muted">Try adjusting your filters or search query</p>
+            <button class="btn-text mt-4" @click="resetFilters">Clear all filters</button>
+          </div>
+
+          <div v-else class="destinations-grid">
+            <div
+              v-for="dest in filteredDestinations"
+              :key="dest.id"
+              class="dest-card glass animate-fade-in"
+            >
+              <div class="card-image">
+                <img :src="dest.image" :alt="dest.name" loading="lazy" />
+                <div class="card-badges">
+                  <span class="category-badge">{{ dest.category }}</span>
+                  <span v-if="dest.rating" class="rating-badge">
+                    <el-icon><Star /></el-icon> {{ dest.rating }}
+                  </span>
+                </div>
+              </div>
+              <div class="card-body">
+                <h3>{{ dest.name }}</h3>
+                <div class="location-text">
+                  <el-icon><Location /></el-icon> {{ dest.location }}
+                </div>
+                <p class="description">{{ dest.description }}</p>
+                <div class="dest-card-footer">
+                  <div class="footer-info">
+                    <span class="reviews">{{ dest.reviews }} reviews</span>
+                    <span class="price">From <span>{{ dest.price }}</span></span>
+                  </div>
+                  <button class="btn-text" @click="exploreDetail(dest)">Details</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div v-if="totalDestinations > pageSize" class="pagination-wrapper mt-12 flex justify-center">
+            <el-pagination
+              v-model:current-page="currentPage"
+              :page-size="pageSize"
+              layout="prev, pager, next"
+              :total="totalDestinations"
+              background
+              class="modern-pagination"
+            />
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 </template>
@@ -130,75 +134,89 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import AppHeader from '../components/AppHeader.vue'
-import { Search, Location } from '@element-plus/icons-vue'
+import { Search, Location, Star } from '@element-plus/icons-vue'
 import { destinationService } from '../services/destinationService'
 
 const route = useRoute()
-const searchQuery = ref(route.query.q || '')
-const filters = reactive({ region: '', category: '' })
+
+// State
+const searchQuery = ref('')
+const loading = ref(false)
 const sortBy = ref('recommended')
 const currentPage = ref(1)
 const pageSize = ref(6)
-const totalItems = ref(0)
-const loading = ref(false)
+const totalDestinations = ref(0)
+const filteredDestinations = ref([])
 
-const destinations = ref([])
-const availableFilters = reactive({ regions: [], categories: [] })
+const filters = reactive({
+  region: '',
+  category: ''
+})
 
-const loadDestinations = async () => {
+const availableFilters = reactive({
+  regions: [],
+  categories: []
+})
+
+// Actions
+const fetchFilters = () => {
+  const data = destinationService.getFilterOptions()
+  availableFilters.regions = data.regions
+  availableFilters.categories = data.categories
+}
+
+const handleSearch = () => {
+  currentPage.value = 1
+  fetchDestinations()
+}
+
+const resetFilters = () => {
+  searchQuery.value = ''
+  filters.region = ''
+  filters.category = ''
+  sortBy.value = 'recommended'
+  handleSearch()
+}
+
+const fetchDestinations = async () => {
   loading.value = true
   try {
     const params = {
-      query: searchQuery.value,
+      q: searchQuery.value,
       region: filters.region,
       category: filters.category,
       sortBy: sortBy.value,
       page: currentPage.value - 1,
       size: pageSize.value
     }
-    // Simulate network delay for better UX (optional, but keeps loading state visible briefly)
+    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 300))
     
     const response = destinationService.getDestinations(params)
-    destinations.value = response.content
-    totalItems.value = response.totalElements
+    filteredDestinations.value = response.items
+    totalDestinations.value = response.total
   } catch (error) {
-    console.error('Error loading destinations:', error)
+    console.error('Failed to fetch destinations:', error)
   } finally {
     loading.value = false
   }
 }
 
-const loadFilters = async () => {
-  try {
-    const response = destinationService.getFilters()
-    availableFilters.regions = response.regions
-    availableFilters.categories = response.categories
-  } catch (error) {
-    console.error('Error loading filters:', error)
-  }
+const exploreDetail = (dest) => {
+  console.log('Exploring:', dest.name)
 }
 
-const handleSearch = () => {
-  currentPage.value = 1
-  loadDestinations()
-}
-
-const handlePageChange = (page) => {
-  currentPage.value = page
-  loadDestinations()
-  window.scrollTo({ top: 300, behavior: 'smooth' })
-}
-
-watch([() => filters.region, () => filters.category, sortBy], () => {
-  currentPage.value = 1
-  loadDestinations()
+// Watchers
+watch([filters, sortBy, currentPage], () => {
+  fetchDestinations()
 })
 
 onMounted(() => {
-  loadFilters()
-  loadDestinations()
+  fetchFilters()
+  if (route.query.q) {
+    searchQuery.value = route.query.q
+  }
+  fetchDestinations()
 })
 </script>
 
@@ -218,154 +236,158 @@ onMounted(() => {
 .hero-bg {
   position: absolute;
   top: -100px;
-  right: -10%;
-  width: 60%;
-  height: 500px;
-  background: radial-gradient(circle at center, var(--primary-light) 0%, transparent 70%);
-  opacity: 0.5;
+  right: -100px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+  opacity: 0.6;
+  z-index: 0;
+}
+
+.discover-hero h1 {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  margin-bottom: 1rem;
+}
+
+.discover-hero h1 span {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .search-box-wrapper {
-  max-width: 700px;
-  margin: 3rem auto 0;
-  padding: 0.75rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.search-box {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-xl);
 }
 
-.modern-search {
+.search-icon {
+  font-size: 1.25rem;
+  color: var(--text-light);
+  margin-right: 1rem;
+}
+
+.search-box input {
   flex: 1;
+  border: none;
+  background: none;
+  font-size: 1.125rem;
+  color: var(--text-main);
+  outline: none;
+  padding: 0.75rem 0;
 }
 
-.modern-search :deep(.el-input__wrapper) {
-  background: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
+/* Filters */
+.filters-bar-wrapper {
+  margin-top: -30px;
+  position: relative;
+  z-index: 20;
 }
 
-/* Filters Bar */
 .filters-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   padding: 2rem;
   border-radius: var(--radius-xl);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  align-items: flex-end;
+  box-shadow: var(--shadow-lg);
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .filter-group label {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-  margin-left: 0.25rem;
-}
-
-.filter-group :deep(.el-select) {
-  width: 100%;
-}
-
-.filter-group :deep(.el-input__wrapper) {
-  height: 48px;
-  padding: 0 1.25rem;
-  border-radius: var(--radius-lg);
-  background-color: var(--bg-glass);
-  box-shadow: 0 0 0 1px var(--border-color) inset !important;
-  transition: var(--transition-base);
-}
-
-.filter-group :deep(.el-input__wrapper.is-focus) {
-  box-shadow: 0 0 0 2px var(--primary) inset !important;
-  background-color: var(--bg-card);
-}
-
-.filter-group :deep(.el-input__inner) {
-  font-weight: 500;
-  color: var(--text-main);
-}
-
-.filter-group :deep(.el-input__suffix) {
-  display: flex;
-  align-items: center;
-}
-
-/* Dest Cards */
-.destinations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.dest-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: var(--transition-base);
-}
-
-.dest-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-xl);
-}
-
-.dest-card-image {
-  position: relative;
-  height: 220px;
-}
-
-.dest-card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.dest-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: var(--bg-card);
-  color: var(--text-main);
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-full);
-  font-weight: 700;
   font-size: 0.875rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.dest-card-content {
-  padding: 1.5rem;
-}
-
-.attr-tag {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--primary);
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.region-tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: var(--primary-light);
-  padding: 0.1rem 0.5rem;
-  border-radius: var(--radius-sm);
+/* Results */
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2.5rem;
 }
 
-.dest-card-content h3 {
-  font-size: 1.25rem;
+.dest-card {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: var(--transition-base);
+}
+
+.dest-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+}
+
+.card-image {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.dest-card:hover .card-image img {
+  transform: scale(1.1);
+}
+
+.card-badges {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.category-badge {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.rating-badge {
+  background: var(--secondary);
+  color: var(--text-main);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-body h3 {
   margin-bottom: 0.5rem;
+  font-size: 1.5rem;
 }
 
 .location-text {
@@ -422,10 +444,6 @@ onMounted(() => {
   color: var(--primary);
   font-weight: 700;
   font-size: 0.875rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
 }
 
 .btn-text:hover {
@@ -437,49 +455,19 @@ onMounted(() => {
   --el-pagination-button-height: 36px;
 }
 
-@media (max-width: 480px) {
-  .modern-pagination :deep(.el-pagination__jump),
-  .modern-pagination :deep(.el-pagination__sizes),
-  .modern-pagination :deep(.el-pagination__total) {
-    display: none !important;
-  }
-  .modern-pagination :deep(.btn-prev),
-  .modern-pagination :deep(.btn-next) {
-    padding: 0 4px;
-  }
-  .modern-pagination :deep(.el-pager li) {
-    min-width: 28px;
-    margin: 0 2px;
-  }
-}
-
 @media (max-width: 768px) {
   .discover-hero {
     padding: 100px 0 60px;
   }
-  .search-box-wrapper {
-    flex-direction: column;
-    border-radius: var(--radius-lg);
-    background: var(--bg-card);
-  }
-  .search-box-wrapper .btn-modern {
-    width: 100%;
+  .search-box {
+    padding: 0.25rem 0.25rem 0.25rem 1rem;
   }
   .filters-bar {
-    padding: 1.5rem;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-  .filter-group {
-    max-width: none;
+    gap: 1rem;
   }
   .destinations-grid {
     grid-template-columns: 1fr;
-  }
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
   }
 }
 </style>

@@ -79,35 +79,19 @@
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
-
-@media (max-width: 768px) {
-  html {
-    font-size: 14px;
-  }
-}
-
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-main);
+  font-size: 16px;
+  line-height: 1.5;
   color: var(--text-main);
-  line-height: 1.6;
+  background-color: var(--bg-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Typography Scale */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-main);
@@ -118,43 +102,41 @@ h1 {
   letter-spacing: -0.02em;
 }
 h2 {
-  font-size: clamp(1.75rem, 5vw, 2.25rem);
-  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  letter-spacing: -0.01em;
 }
 h3 {
-  font-size: clamp(1.25rem, 4vw, 1.5rem);
-}
-h4 {
-  font-size: 1.25rem;
-}
-
-p {
-  margin-bottom: 1rem;
+  font-size: clamp(1.5rem, 4vw, 1.75rem);
 }
 
 a {
-  color: var(--primary);
+  color: inherit;
   text-decoration: none;
   transition: var(--transition-fast);
 }
 
-a:hover {
-  color: var(--primary-hover);
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
 }
 
-/* Glassmorphism Utility */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Glassmorphism Base */
 .glass {
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
 }
 
-[data-theme='dark'] .glass {
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Modern Scrollbar */
+/* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -169,5 +151,5 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-color-hover);
+  background: var(--text-light);
 }

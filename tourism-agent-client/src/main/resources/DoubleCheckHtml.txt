@@ -26,13 +26,18 @@ All subsequent review, modification, and optimization work must be performed onl
    * Confirm the HTML is properly formatted with standard indentation.
 2. **CSS Styling & Print Optimization**
    * **Strict A4 Size & Margins**: Ensure the page strictly follows 210mm × 297mm with 10mm print margins reserved.
+   * **Button Placement & Premium Aesthetics**: 
+       - Verify that the print button uses a modern **Lucide icon** (`printer`).
+       - Confirm it matches the "Gen-Z friendly" premium design: glassmorphism, subtle shadows, and clean typography.
+       - Ensure it's positioned safely and **DO NOT** overlap content.
+   * **Spacing & Whitespace**: Check for excessive spacing or gaps. Sections should have consistent, professional margins.
    * **Print Styles (`@media print`)**: Carefully review print-specific CSS to ensure:
-       * Non-print elements such as print buttons are hidden.
-       * Content paginates properly and elements are not cut across pages.
-       * Colors remain clear under high contrast and grayscale printing.
-       * Optional crop marks are correctly implemented.
-   * **TailwindCSS Usage**: Verify TailwindCSS classes are correctly and efficiently applied without conflicts or unnecessary overrides.
-   * **CSS Errors**: Fix any CSS syntax errors, invalid properties, or browser compatibility issues.
+       - Non-print elements such as print buttons are hidden.
+       - Content paginates properly using `page-break-inside: avoid`.
+       - Colors remain clear under high contrast and grayscale printing.
+   * **CDN Links**: Verify Lucide Icons (`https://unpkg.com/lucide@latest`) and Google Fonts are correctly loaded.
+   * **TailwindCSS Usage**: Verify TailwindCSS classes are correctly applied.
+   * **CSS Errors**: Fix any CSS syntax errors.
 3. **JavaScript Functionality**
    * **Print Button**: Confirm the print button works correctly, opens the print dialog, and applies print styles.
    * **Intersection Observer Animations**

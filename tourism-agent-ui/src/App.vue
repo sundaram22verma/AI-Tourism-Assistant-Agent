@@ -1,18 +1,35 @@
 <template>
   <div id="app">
-    <router-view v-slot="{ Component }">
-      <transition name="page-slide" mode="out-in">
-        <component :is="Component" />
-      </transition>
-    </router-view>
+    <app-header />
+    
+    <main class="main-content">
+      <router-view v-slot="{ Component }">
+        <transition name="page-slide" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </main>
+
+    <app-footer />
   </div>
 </template>
+
+<script setup>
+import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
+</script>
 
 <style>
 /* Global styles */
 #app {
   width: 100%;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
 }
 
 /* Modern Page Transition */

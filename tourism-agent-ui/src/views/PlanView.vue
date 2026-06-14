@@ -1,186 +1,240 @@
 <template>
   <div class="plan-page">
-    <app-header />
-
     <!-- Hero Header -->
     <header class="plan-hero">
       <div class="hero-bg"></div>
-      <div class="container relative z-1">
-        <div class="hero-content text-center">
-          <h1 class="page-title">Plan Your <span>Perfect Trip</span></h1>
-          <p class="page-subtitle">
-            Let our AI agent handle the details while you focus on the memories.
-          </p>
-        </div>
+      <div class="container relative z-10 text-center">
+        <h1 class="page-title animate-slide-down">Plan Your <span>Dream</span> Trip</h1>
+        <p class="page-subtitle animate-slide-up">
+          Tell us where you want to go, and our AI will build a perfect day-by-day itinerary for you.
+        </p>
       </div>
     </header>
 
-    <div class="container mt-4 pb-20">
+    <main class="container pb-20">
       <div class="plan-wrapper">
-        <!-- Form Side -->
-        <div v-if="!showPlanResult" class="form-container">
-          <div class="form-card glass">
+        <!-- Form Section -->
+        <transition name="fade-slide">
+          <div v-if="showForm" class="form-card glass">
             <div class="form-header">
               <h2>Trip Details</h2>
-              <p>Tell us where you want to go and what you love.</p>
+              <p>Help us customize your perfect journey</p>
             </div>
 
-            <el-form :model="tripForm" label-position="top" class="modern-form">
+            <el-form :model="planForm" label-position="top" class="modern-form">
               <div class="form-row">
-                <el-form-item label="Where to?" required class="flex-1">
+                <el-form-item label="Destination" class="flex-1">
                   <el-input
-                    v-model="tripForm.destination"
-                    placeholder="e.g. Kyoto, Japan or Amalfi Coast, Italy"
-                  >
-                    <template #prefix
-                      ><el-icon><Location /></el-icon
-                    ></template>
-                  </el-input>
+                    v-model="planForm.destination"
+                    placeholder="e.g. Paris, France or Tokyo, Japan"
+                    prefix-icon="Location"
+                    class="premium-input"
+                  />
                 </el-form-item>
-              </div>
 
-              <div class="form-row">
-                <el-form-item label="When are you going?" required class="flex-1">
+                <el-form-item label="Travel Dates" class="flex-1">
                   <el-date-picker
-                    v-model="tripForm.dateRange"
+                    v-model="planForm.dates"
                     type="daterange"
-                    range-separator="→"
+                    range-separator="to"
                     start-placeholder="Start"
                     end-placeholder="End"
-                    class="full-width"
-                    :disabled-date="disablePastDates"
+                    class="premium-date-picker w-full"
                   />
                 </el-form-item>
               </div>
 
-              <el-form-item label="What's your style?" required>
-                <el-select
-                  v-model="tripForm.travelStyle"
-                  multiple
-                  placeholder="Select all that apply"
-                  class="full-width"
-                  collapse-tags
-                  collapse-tags-tooltip
-                >
-                  <el-option label="History & Culture" value="History & Culture" />
-                  <el-option label="Food Experience" value="Food Experience" />
-                  <el-option label="Natural Scenery" value="Natural Scenery" />
-                  <el-option label="Shopping" value="Shopping" />
-                  <el-option label="Adventure" value="Adventure" />
-                  <el-option label="Relaxation" value="Relaxation" />
-                  <el-option label="Family Friendly" value="Family Friendly" />
-                  <el-option label="Photography" value="Photography" />
-                </el-select>
-              </el-form-item>
+              <div class="form-row">
+                <el-form-item label="What's your travel style?" class="w-full">
+                  <el-select
+                    v-model="planForm.travelStyle"
+                    multiple
+                    collapse-tags
+                    collapse-tags-indicator
+                    placeholder="Select Styles (Adventure, Beach, etc.)"
+                    class="premium-select w-full"
+                  >
+                    <el-option label="History & Culture" value="History & Culture" />
+                    <el-option label="Food Experience" value="Food Experience" />
+                    <el-option label="Natural Scenery" value="Natural Scenery" />
+                    <el-option label="Shopping" value="Shopping" />
+                    <el-option label="Adventure" value="Adventure" />
+                    <el-option label="Relaxation" value="Relaxation" />
+                    <el-option label="Family Friendly" value="Family Friendly" />
+                    <el-option label="Photography" value="Photography" />
+                  </el-select>
+                </el-form-item>
+              </div>
 
-              <el-form-item label="Any special requests?">
-                <el-input
-                  v-model="tripForm.specialRequests"
-                  type="textarea"
-                  placeholder="e.g. Child-friendly, wheelchair accessible, gluten-free options..."
-                  :rows="3"
-                />
-              </el-form-item>
+              <div class="form-row">
+                <el-form-item label="Special Requests" class="w-full">
+                  <el-input
+                    v-model="planForm.specialRequests"
+                    type="textarea"
+                    :rows="3"
+                    placeholder="e.g. We prefer vegetarian food, need wheelchair access for some sites, and would love to see some hidden local spots..."
+                    class="premium-textarea w-full"
+                  />
+                </el-form-item>
+              </div>
 
               <div class="form-actions mt-8">
                 <button
-                  class="btn-modern w-full"
-                  @click.prevent="generatePlan"
-                  :disabled="isGenerating"
+                  class="btn-modern primary full-width"
+                  :disabled="loading"
+                  @click.prevent="handleGeneratePlan"
                 >
-                  <span v-if="!isGenerating">Create My Custom Guide</span>
-                  <span v-else>Crafting Your Adventure...</span>
+                  <template v-if="!loading">
+                    Generate My Itinerary
+                    <el-icon class="el-icon--right"><EditPen /></el-icon>
+                  </template>
+                  <template v-else>
+                    <el-icon class="is-loading"><Loading /></el-icon>
+                    Crafting your journey...
+                  </template>
                 </button>
               </div>
             </el-form>
           </div>
-        </div>
+        </transition>
 
-        <!-- Result Side -->
-        <div v-else class="result-container animate-fade-in">
-          <div class="result-header flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold">Your Itinerary</h2>
-              <p class="text-muted">{{ tripForm.destination }} • {{ formatDateRange }}</p>
+        <!-- Result Section -->
+        <transition name="fade-slide">
+          <div v-if="itinerary || loading" class="itinerary-result mt-12">
+            <div class="result-card glass">
+              <!-- Loading State -->
+              <div v-if="loading" class="plan-loading-state py-12 text-center">
+                <div class="loading-animation mb-6">🌍</div>
+                <h3 class="loading-title">Designing your dream trip to {{ planForm.destination }}...</h3>
+                <p class="text-muted mb-8">Our AI is searching for the best spots and optimizing your route.</p>
+                
+                <div class="loading-content-wrapper">
+                  <el-progress 
+                    :percentage="loadingProgress" 
+                    :stroke-width="12" 
+                    striped 
+                    striped-flow 
+                    class="modern-progress"
+                  />
+                  
+                  <button class="btn-secondary mt-10" @click="cancelAndEdit">
+                    <el-icon><EditPen /></el-icon> Edit Trip Details
+                  </button>
+                </div>
+              </div>
+
+              <!-- Final Itinerary -->
+              <div v-else-if="itinerary" class="itinerary-content">
+                <div class="result-header flex justify-between items-center mb-8">
+                  <div>
+                    <span class="badge">Your Personalized Guide</span>
+                    <h2 class="mt-2">The Perfect Trip to {{ planForm.destination }}</h2>
+                  </div>
+                  <button class="btn-secondary" @click="editDetails">
+                    <el-icon><EditPen /></el-icon> Edit Details
+                  </button>
+                </div>
+
+                <TravelPlanViewer 
+                :html-content="itinerary" 
+                :loading="loading"
+              />
+              </div>
             </div>
-            <button class="btn-secondary" @click="showPlanResult = false">← Edit Details</button>
           </div>
-
-          <div class="result-card glass">
-            <travel-plan-viewer
-              :loading="isGenerating"
-              :html-content="planHtmlContent"
-              :error="planError"
-              @retry="generatePlan"
-              @back="showPlanResult = false"
-            />
-          </div>
-        </div>
+        </transition>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Location } from '@element-plus/icons-vue'
+import { Location, Calendar, Star, EditPen, Loading } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-import AppHeader from '../components/AppHeader.vue'
 import TravelPlanViewer from '../components/TravelPlanViewer.vue'
 import { generateTravelPlan } from '../services/api'
 
-const tripForm = ref({
+const loading = ref(false)
+const itinerary = ref(null)
+const loadingProgress = ref(0)
+const showForm = ref(true)
+
+const planForm = reactive({
   destination: '',
-  dateRange: [dayjs().add(1, 'day').toDate(), dayjs().add(5, 'day').toDate()],
+  dates: [],
   travelStyle: [],
-  specialRequests: '',
+  specialRequests: ''
 })
 
-const disablePastDates = (date) => date < dayjs().startOf('day')
-const isGenerating = ref(false)
-const showPlanResult = ref(false)
-const planHtmlContent = ref('')
-const planError = ref('')
+const editDetails = () => {
+  itinerary.value = null
+  showForm.value = true
+}
 
-const formatDateRange = computed(() => {
-  if (!tripForm.value.dateRange?.[0] || !tripForm.value.dateRange?.[1]) return ''
-  const start = dayjs(tripForm.value.dateRange[0]).format('MMM D')
-  const end = dayjs(tripForm.value.dateRange[1]).format('MMM D, YYYY')
-  return `${start} - ${end}`
-})
+const cancelAndEdit = () => {
+  loading.value = false
+  showForm.value = true
+}
 
-const generatePlan = async () => {
-  if (!tripForm.value.destination) return ElMessage.error('Please enter a destination')
-  if (!tripForm.value.dateRange?.[0]) return ElMessage.error('Please select travel dates')
-  if (tripForm.value.travelStyle.length === 0)
-    return ElMessage.error('Please select at least one travel style')
+const handleGeneratePlan = async () => {
+  if (!planForm.destination) {
+    ElMessage.warning('Please enter a destination')
+    return
+  }
+  if (!planForm.dates || planForm.dates.length === 0) {
+    ElMessage.warning('Please select travel dates')
+    return
+  }
+  if (planForm.travelStyle.length === 0) {
+    ElMessage.warning('Please select at least one travel style')
+    return
+  }
 
-  isGenerating.value = true
-  showPlanResult.value = true
-  planHtmlContent.value = ''
-  planError.value = ''
+  showForm.value = false
+  loading.value = true
+  itinerary.value = null
+  loadingProgress.value = 10
+
+  // Start progress animation
+  const interval = setInterval(() => {
+    if (loadingProgress.value < 90) {
+      loadingProgress.value += Math.floor(Math.random() * 5)
+    }
+  }, 500)
 
   try {
-    const html = await generateTravelPlan(
-      tripForm.value.destination,
-      `${dayjs(tripForm.value.dateRange[0]).format('YYYY-MM-DD')} to ${dayjs(tripForm.value.dateRange[1]).format('YYYY-MM-DD')}`,
-      tripForm.value.travelStyle.join(', ') +
-        (tripForm.value.specialRequests ? ', ' + tripForm.value.specialRequests : ''),
+    const startDate = planForm.dates[0] ? dayjs(planForm.dates[0]).format('YYYY-MM-DD') : ''
+    const endDate = planForm.dates[1] ? dayjs(planForm.dates[1]).format('YYYY-MM-DD') : ''
+
+    const preferences = planForm.travelStyle.join(', ') + 
+      (planForm.specialRequests ? `. Special requests: ${planForm.specialRequests}` : '')
+
+    const response = await generateTravelPlan(
+      planForm.destination,
+      `${startDate} to ${endDate}`,
+      preferences
     )
 
-    if (html?.trim()) {
-      planHtmlContent.value = html
-    } else {
-      throw new Error('Received empty HTML from server')
+    if (!loading.value) {
+      clearInterval(interval)
+      return
     }
+
+    loadingProgress.value = 100
+    itinerary.value = response
   } catch (error) {
-    console.error(error)
-    planError.value =
-      error.response?.data?.details || error.message || 'An unexpected error occurred'
-    ElMessage.error(planError.value)
+    if (!loading.value) {
+      clearInterval(interval)
+      return
+    }
+    console.error('Plan generation failed:', error)
+    ElMessage.error('Failed to generate plan. Please try again.')
+    showForm.value = true // Restore form on error
   } finally {
-    isGenerating.value = false
+    clearInterval(interval)
+    loading.value = false
   }
 }
 </script>
@@ -193,7 +247,7 @@ const generatePlan = async () => {
 
 .plan-hero {
   position: relative;
-  padding: 120px 0 60px;
+  padding: 80px 0 40px;
   background-color: var(--bg-main);
   overflow: hidden;
 }
@@ -227,19 +281,11 @@ const generatePlan = async () => {
   margin: 0 auto;
 }
 
-.text-muted {
-  color: var(--text-muted);
-}
-
 .plan-wrapper {
   max-width: 900px;
   margin: 0 auto;
   position: relative;
   z-index: 10;
-}
-
-.container.pb-20 {
-  padding-top: 40px;
 }
 
 .form-card {
@@ -273,46 +319,127 @@ const generatePlan = async () => {
   margin-bottom: 1rem;
 }
 
-.flex-1 {
-  flex: 1;
-}
-.w-full {
-  width: 100%;
-}
-.full-width {
-  width: 100%;
-}
-
 .modern-form :deep(.el-form-item__label) {
   font-weight: 600;
   color: var(--text-main);
   margin-bottom: 0.5rem;
 }
 
-.result-header {
-  flex-wrap: wrap;
-  gap: 1.5rem;
+.premium-input :deep(.el-input__wrapper),
+.premium-date-picker :deep(.el-input__wrapper),
+.premium-date-picker.el-range-editor,
+.premium-select :deep(.el-select__wrapper) {
+  background-color: var(--bg-glass) !important;
+  border: 1px solid var(--border-color);
+  box-shadow: none !important;
+  border-radius: var(--radius-full) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 52px;
+  padding: 0 20px !important;
+}
+
+.premium-textarea :deep(.el-textarea__inner) {
+  background-color: var(--bg-glass) !important;
+  border: 1px solid var(--border-color);
+  box-shadow: none !important;
+  border-radius: var(--radius-xl);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 15px 20px;
+  font-family: inherit;
+}
+
+.premium-input-lg :deep(.el-input__wrapper) {
+  height: 56px;
+}
+
+.premium-input :deep(.el-input__wrapper):hover,
+.premium-date-picker :deep(.el-range-editor.el-input__wrapper):hover,
+.premium-select :deep(.el-select__wrapper):hover,
+.premium-textarea :deep(.el-textarea__inner):hover {
+  border-color: var(--primary);
+  background-color: var(--bg-card);
+}
+
+.premium-input :deep(.el-input__wrapper.is-focus),
+.premium-date-picker :deep(.el-range-editor.el-input__wrapper.is-active),
+.premium-select :deep(.el-select__wrapper.is-focused),
+.premium-textarea :deep(.el-textarea__inner:focus) {
+  border-color: var(--primary);
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 1px var(--primary) !important;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .result-card {
-  padding: clamp(1rem, 4vw, 2rem);
+  padding: clamp(1.5rem, 5vw, 3rem);
   border-radius: var(--radius-xl);
-  min-height: 600px;
+  min-height: 400px;
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
+.loading-animation {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  animation: floating 3s ease-in-out infinite;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.loading-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.loading-content-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.modern-progress {
+  margin: 2rem 0;
+}
+
+.modern-progress :deep(.el-progress-bar__outer) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--radius-full);
+}
+
+.modern-progress :deep(.el-progress-bar__inner) {
+  background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+  box-shadow: 0 0 15px rgba(0, 206, 209, 0.4);
+}
+
+@keyframes floating {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Transitions */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.is-loading {
+  animation: rotating 2s linear infinite;
+}
+
+@keyframes rotating {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 768px) {
@@ -322,18 +449,6 @@ const generatePlan = async () => {
   .form-row {
     flex-direction: column;
     gap: 0;
-  }
-  .form-header {
-    margin-bottom: 1.5rem;
-  }
-  .result-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .result-header .btn-secondary {
-    width: 100%;
-    justify-content: center;
-    order: -1;
   }
 }
 </style>

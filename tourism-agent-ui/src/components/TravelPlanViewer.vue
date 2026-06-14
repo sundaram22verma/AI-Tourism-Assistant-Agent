@@ -45,12 +45,12 @@
 
     <!-- Content State -->
     <div v-else-if="htmlContent" class="plan-ready animate-fade-in">
-      <div class="plan-header-actions mb-4">
+      <div class="plan-header-actions mb-8">
         <div class="flex gap-4">
           <button class="btn-action primary" @click="printPlan">
             <el-icon><Printer /></el-icon> Print Guide
           </button>
-          <button class="btn-action" @click="openInNewTab">
+          <button class="btn-action secondary-action" @click="openInNewTab">
             <el-icon><Position /></el-icon> Full Screen
           </button>
         </div>
@@ -296,15 +296,18 @@ const openInNewTab = () => iframeUrl.value && window.open(iframeUrl.value, '_bla
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
-  background: var(--bg-main);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
+  color: var(--text-main);
   font-weight: 600;
   transition: var(--transition-fast);
   font-size: 0.875rem;
+  cursor: pointer;
 }
 
 .btn-action:hover {
   background: var(--border-color);
+  border-color: var(--primary);
 }
 
 .btn-action.primary {
@@ -317,7 +320,13 @@ const openInNewTab = () => iframeUrl.value && window.open(iframeUrl.value, '_bla
   background: var(--primary-hover);
 }
 
+.btn-action.secondary-action {
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+}
+
 .iframe-container {
+  margin-top: 1rem;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
@@ -326,8 +335,8 @@ const openInNewTab = () => iframeUrl.value && window.open(iframeUrl.value, '_bla
 
 .plan-iframe {
   width: 100%;
-  height: calc(100vh - 250px);
-  min-height: 500px;
+  height: calc(100vh - 220px);
+  min-height: 600px;
   border: none;
   background: white;
 }

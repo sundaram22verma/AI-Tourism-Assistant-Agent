@@ -25,7 +25,11 @@ public class WeatherService {
     @Tool(description = "Get real-time weather details for a target city")
     public WeatherResponse getWeather(WeatherRequest request) {
         String city = request.getCity();
-        if (city != null && city.contains(",")) {
+        if (city == null || city.trim().isEmpty()) {
+            log.warn("City name is empty, skipping weather lookup");
+            return null;
+        }
+        if (city.contains(",")) {
             city = city.split(",")[0].trim();
         }
         log.info("Fetching target location weather context for: {}", city);
@@ -43,8 +47,13 @@ public class WeatherService {
                     .timeout(5000)
                     .execute();
 
+            log.debug("City lookup request URL: {}", citySearchHttpResponse.toString());
+            String responseBody = citySearchHttpResponse.body();
+            log.debug("City lookup response body: {}", responseBody);
+
             if (!citySearchHttpResponse.isOk()) {
-                log.error("City coordinates lookup failed: {}", citySearchHttpResponse.getStatus());
+                log.error("City coordinates lookup failed: {} | URL: {} | Response: {}", 
+                    citySearchHttpResponse.getStatus(), citySearchApiUrl, responseBody);
                 return null;
             }
 
